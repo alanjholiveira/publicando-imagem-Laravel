@@ -1,0 +1,39 @@
+version: '3.5'
+
+services:
+  app:
+    container_name: desafio-app
+    build: ./.docker/app
+    volumes:
+    - ./app:/var/www
+
+  mysql:
+    container_name: desafio-db
+    image: mysql:5.7.22
+    command: --innodb-use-native-aio=0
+    restart: always
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./.docker/dbdata:/var/lib/mysql"
+  environment:
+    MYSQL_USER: desafio
+    MYSQL_PASSWORD: desafio
+    MYSQL_DATABASE: desafioapp
+    MYSQL_ROOT_PASSWORD: root
+
+
+  nginx:
+    container_name: desafio-web
+    build: ./.docker/nginx
+    ports:
+    - "8000:80"
+    volumes:
+    - ./app:/var/www
+
+
+  redis:
+    container_name: desafio-redis
+    image: redis:alpine
+    expose:
+      - 6379
